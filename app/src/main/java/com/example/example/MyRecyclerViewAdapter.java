@@ -11,10 +11,12 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,6 +103,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         EditText classNameText = dialogView.findViewById(R.id.classNameText);
         EditText titleText = dialogView.findViewById(R.id.titleText);
         DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
+        Spinner spinner = dialogView.findViewById(R.id.colorSpinner);
 
         // Get the existing Assignment object at the given position
         Assignment existingAssignment = mData.get(position);
@@ -108,6 +111,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         // Set the existing values in the EditText fields
         classNameText.setText(existingAssignment.getClassName());
         titleText.setText(existingAssignment.getAssignmentTitle());
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.mInflater.getContext(), R.array.color_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        int spinnerPosition = adapter.getPosition(existingAssignment.getColor());
+        spinner.setSelection(spinnerPosition);
 
         String[] dateComponents = existingAssignment.getDueDate().split("/");
         datePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
@@ -121,12 +131,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 String day = String.valueOf(datePicker.getDayOfMonth());
                 String month = String.valueOf(datePicker.getMonth()+1);
                 String year = String.valueOf(datePicker.getYear());
+                String color = spinner.getSelectedItem().toString();
 
                 String date = month + "/" + day + "/" + year;
 
                 existingAssignment.setAssignmentTitle(newTitle);
                 existingAssignment.setClassName(newClassName);
                 existingAssignment.setDueDate(date);
+                existingAssignment.setColor(color);
 
                 notifyItemChanged(position);
 
