@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.example.Assignment;
 import com.example.example.MyRecyclerViewAdapter;
@@ -41,9 +44,9 @@ public class AssignmentsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        Assignment mathHw = new Assignment("Linear Algebra", "Webwork", "5/6/24");
+        Assignment mathHw = new Assignment("Linear Algebra", "Webwork", "5/6/2024", "red");
         assignmentList.add(mathHw);
-        
+
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);
         recyclerView.setAdapter(myRecyclerViewAdapter);
 
@@ -67,7 +70,17 @@ public class AssignmentsFragment extends Fragment {
         View dialogView = inflater.inflate(R.layout.create_assignment_dialog, null);
         EditText classNameText = dialogView.findViewById(R.id.classNameText);
         EditText assignmentTitleText = dialogView.findViewById(R.id.titleText);
-        EditText dueDateText = dialogView.findViewById(R.id.dateText);
+        Spinner spinner = dialogView.findViewById(R.id.colorSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.color_array,
+                android.R.layout.simple_spinner_item
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        DatePicker dueDatePicker = dialogView.findViewById(R.id.datePicker);
 
         // Set the inflated view to the builder
         builder.setView(dialogView);
@@ -77,9 +90,14 @@ public class AssignmentsFragment extends Fragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 String className = classNameText.getText().toString();
                 String title = assignmentTitleText.getText().toString();
-                String dueDate = dueDateText.getText().toString();
+                String day = String.valueOf(dueDatePicker.getDayOfMonth());
+                String month = String.valueOf(dueDatePicker.getMonth()+1);
+                String year = String.valueOf(dueDatePicker.getYear());
+                String color = spinner.getSelectedItem().toString();
 
-                Assignment hw = new Assignment(className, title, dueDate);
+                String date = month + "/" + day + "/" + year;
+
+                Assignment hw = new Assignment(className, title, date, color);
                 assignmentList.add(hw);
 
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);

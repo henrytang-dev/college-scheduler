@@ -20,29 +20,43 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="Class"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:textColor="@android:color/black"
-        android:textSize="20sp"/>
+        android:textSize="15sp"/>
+
 
     <EditText
         android:id="@+id/titleText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="Title"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:textColor="@android:color/black"
-        android:textSize="20sp"/>
+        android:textSize="15sp"/>
 
-    <EditText
-        android:id="@+id/dateText"
-        android:layout_width="200dp"
+    <Spinner
+        android:id="@+id/colorSpinner"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Due Date"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="12dp"
+        android:textSize="20sp"
         android:textColor="@android:color/black"
-        android:textSize="20sp"/>
+        android:text="Pick Due Date"/>
+
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp" />
 
 </LinearLayout>

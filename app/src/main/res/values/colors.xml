@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="assignment_red">#a32424</color>
+    <color name="assignment_blue">#242aa3</color>
+    <color name="assignment_purple">#590987</color>
+    <color name="assignment_green">#1a6b0a</color>
+    <color name="assignment_pink">#9e2682</color>
+    <color name="assignment_brown">#993d15</color>
+
 </resources>
