@@ -1,5 +1,9 @@
 package com.example.example;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Exam {
     private String examName;
     private String location;
@@ -53,5 +57,12 @@ public class Exam {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public Date convertDate() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M/dd/yyyy HH:mm");
+        String dateTimeString = date + " " + time;
+        Date dateObject = simpleDateFormat.parse(dateTimeString);
+        return dateObject;
     }
 }

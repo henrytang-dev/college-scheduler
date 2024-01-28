@@ -93,14 +93,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public void sortDate() {
         Collections.sort(mData, new Comparator<Assignment>() {
             @Override
-            public int compare(Assignment assignment, Assignment t1) {
+            public int compare(Assignment a1, Assignment a2) {
                 try {
-                    Date a = assignment.convertDueDate();
-                    Date b = t1.convertDueDate();
+                    Date a = a1.convertDueDate();
+                    Date b = a2.convertDueDate();
                     return a.compareTo(b);
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(mInflater.getContext(), "Date threw error", Toast.LENGTH_LONG).show();
                 }
+                return 0;
             }
         });
 
@@ -110,8 +111,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public void sortClasses() {
         Collections.sort(mData, new Comparator<Assignment>() {
             @Override
-            public int compare(Assignment assignment, Assignment t1) {
-                return assignment.getClassName().compareTo(t1.getClassName());
+            public int compare(Assignment a1, Assignment a2) {
+                return a1.getClassName().compareTo(a2.getClassName());
             }
         });
 

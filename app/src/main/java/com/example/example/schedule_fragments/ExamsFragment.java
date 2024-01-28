@@ -102,14 +102,7 @@ public class ExamsFragment extends Fragment {
                 String year = String.valueOf(datePicker.getYear());
 
                 String hour = String.valueOf(timePicker.getHour());
-                String minute = String.valueOf(timePicker.getMinute());
-
-//                String amPm;
-//                if (hour < 12) {
-//                    amPm = "AM";
-//                } else {
-//                    amPm = "PM";
-//                }
+                String minute = String.format("%02d", timePicker.getMinute());
 
                 String time = hour + ":" + minute;
 
@@ -122,6 +115,7 @@ public class ExamsFragment extends Fragment {
 
                 myRecyclerViewAdapter = new ExamViewAdapter(getContext(), examList, ExamsFragment.this);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
+                myRecyclerViewAdapter.sortDate();
 
 
             }
@@ -137,7 +131,7 @@ public class ExamsFragment extends Fragment {
         dialog.show();
     }
 
-    public void saveData(List<Assignment> list) {
+    public void saveData(List<Exam> list) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -150,7 +144,7 @@ public class ExamsFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("exam list", null);
-        Type type = new TypeToken<ArrayList<Assignment>>() {}.getType();
+        Type type = new TypeToken<ArrayList<Exam>>() {}.getType();
         examList = gson.fromJson(json, type);
 
         if(examList == null) {
