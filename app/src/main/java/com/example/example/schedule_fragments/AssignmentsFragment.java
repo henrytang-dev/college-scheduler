@@ -54,7 +54,7 @@ public class AssignmentsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         loadData();
-        myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);
+        myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
 
         Spinner sortSpinner = root.findViewById(R.id.sortSpinner);
@@ -130,10 +130,10 @@ public class AssignmentsFragment extends Fragment {
                 Assignment hw = new Assignment(className, title, date, color);
                 assignmentList.add(hw);
 
-                myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);
+                myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
 
-                saveData();
+                saveData(assignmentList);
 
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -147,11 +147,11 @@ public class AssignmentsFragment extends Fragment {
         Dialog dialog = builder.create();
         dialog.show();
     }
-    private void saveData() {
+    public void saveData(List<Assignment> list) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(assignmentList);
+        String json = gson.toJson(list);
         editor.putString("assignment list", json);
         editor.apply();
     }

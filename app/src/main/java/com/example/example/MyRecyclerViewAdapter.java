@@ -40,12 +40,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     private List<Assignment> mData;
     private LayoutInflater mInflater;
+    private AssignmentsFragment fragment;
 
 
 
-    public MyRecyclerViewAdapter(Context context, List<Assignment> data) {
+    public MyRecyclerViewAdapter(Context context, List<Assignment> data, AssignmentsFragment fragment) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.fragment = fragment;
     }
     @NonNull
     @Override
@@ -103,6 +105,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         });
 
         notifyDataSetChanged();
+        fragment.saveData(mData);
     }
     public void sortClasses() {
         Collections.sort(mData, new Comparator<Assignment>() {
@@ -113,6 +116,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         });
 
         notifyDataSetChanged();
+        fragment.saveData(mData);
     }
 
     @Override
@@ -174,6 +178,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 existingAssignment.setColor(color);
 
                 notifyItemChanged(position);
+                fragment.saveData(mData);
 
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
