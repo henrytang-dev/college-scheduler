@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_array">
+        <item>Sort By</item>
+        <item>Due Date</item>
+        <item>Classes</item>
+    </string-array>
+</resources>

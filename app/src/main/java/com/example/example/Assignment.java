@@ -1,6 +1,12 @@
 package com.example.example;
 
-import com.example.example.schedule_fragments.AssignmentsFragment;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Assignment {
     private String className;
@@ -48,4 +54,11 @@ public class Assignment {
     public void setColor(String color) {
         this.color = color;
     }
+
+    public Date convertDueDate() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M/dd/yyyy");
+        Date date = simpleDateFormat.parse(dueDate);
+        return date;
+    }
+
 }

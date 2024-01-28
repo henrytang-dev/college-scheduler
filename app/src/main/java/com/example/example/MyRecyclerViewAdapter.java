@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.example.schedule_fragments.AssignmentsFragment;
 
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -80,6 +86,33 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 break;
 
         }
+    }
+
+    public void sortDate() {
+        Collections.sort(mData, new Comparator<Assignment>() {
+            @Override
+            public int compare(Assignment assignment, Assignment t1) {
+                try {
+                    Date a = assignment.convertDueDate();
+                    Date b = t1.convertDueDate();
+                    return a.compareTo(b);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        notifyDataSetChanged();
+    }
+    public void sortClasses() {
+        Collections.sort(mData, new Comparator<Assignment>() {
+            @Override
+            public int compare(Assignment assignment, Assignment t1) {
+                return assignment.getClassName().compareTo(t1.getClassName());
+            }
+        });
+
+        notifyDataSetChanged();
     }
 
     @Override

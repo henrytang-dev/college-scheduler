@@ -1,8 +1,12 @@
 package com.example.example.schedule_fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,9 +26,14 @@ import com.example.example.Assignment;
 import com.example.example.MyRecyclerViewAdapter;
 import com.example.example.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class AssignmentsFragment extends Fragment {
@@ -31,7 +41,8 @@ public class AssignmentsFragment extends Fragment {
     RecyclerView recyclerView;
 
     MyRecyclerViewAdapter myRecyclerViewAdapter;
-    List<Assignment> assignmentList = new ArrayList<>();
+    List<Assignment> assignmentList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,15 +51,34 @@ public class AssignmentsFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_assignments, container, false);
 
         recyclerView = root.findViewById(R.id.assignment_list_view);
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        Assignment mathHw = new Assignment("Linear Algebra", "Webwork", "5/6/2024", "red");
-        assignmentList.add(mathHw);
-
+        loadData();
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);
         recyclerView.setAdapter(myRecyclerViewAdapter);
+
+        Spinner sortSpinner = root.findViewById(R.id.sortSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.sort_array,
+                android.R.layout.simple_spinner_item
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(adapter);
+
+        Button sortBtn = root.findViewById(R.id.sortBtn);
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String sortType = sortSpinner.getSelectedItem().toString();
+                if(sortType.equals("Due Date")) {
+                    myRecyclerViewAdapter.sortDate();
+                } else if(sortType.equals("Classes")) {
+                    myRecyclerViewAdapter.sortClasses();
+                }
+            }
+        });
 
         FloatingActionButton fab = root.findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +133,8 @@ public class AssignmentsFragment extends Fragment {
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
 
+                saveData();
+
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
@@ -111,12 +143,29 @@ public class AssignmentsFragment extends Fragment {
             }
         });
 
-        // Customize the dialog as needed, e.g., set title, positive/negative buttons, etc.
-
         // Create and show the dialog
         Dialog dialog = builder.create();
         dialog.show();
     }
+    private void saveData() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(assignmentList);
+        editor.putString("assignment list", json);
+        editor.apply();
+    }
 
+    private void loadData() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("assignment list", null);
+        Type type = new TypeToken<ArrayList<Assignment>>() {}.getType();
+        assignmentList = gson.fromJson(json, type);
+
+        if(assignmentList == null) {
+            assignmentList = new ArrayList<>();
+        }
+    }
 
 }
