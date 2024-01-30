@@ -39,7 +39,6 @@ import java.util.Set;
 public class AssignmentsFragment extends Fragment {
 
     RecyclerView recyclerView;
-
     MyRecyclerViewAdapter myRecyclerViewAdapter;
     List<Assignment> assignmentList;
 
