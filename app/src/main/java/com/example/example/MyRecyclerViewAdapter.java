@@ -129,6 +129,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
+        fragment.saveData(mData);
     }
 
     public void showEditDialog(Context context, int position, List<Assignment> mData) {
