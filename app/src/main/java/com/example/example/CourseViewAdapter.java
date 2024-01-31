@@ -184,6 +184,7 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
                 existingCourse.setCourseColor(newCourseColor);
 
                 notifyItemChanged(position);
+                fragment.saveData(mData);
             }
             }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
