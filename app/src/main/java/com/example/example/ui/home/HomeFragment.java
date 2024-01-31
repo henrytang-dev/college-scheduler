@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.example.CourseViewAdapter;
 import com.example.example.Exam;
+import com.example.example.ExamViewAdapter;
 import com.example.example.R;
 import com.example.example.Course;
 import com.example.example.databinding.FragmentHomeBinding;
@@ -49,13 +50,17 @@ public class HomeFragment extends Fragment {
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
+//        View root = binding.getRoot();
 
         recyclerView = root.findViewById(R.id.courses_list_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         loadData();
+
+        myRecyclerViewAdapter = new CourseViewAdapter(HomeFragment.this, courseList, getContext());
+        recyclerView.setAdapter(myRecyclerViewAdapter);
 
         FloatingActionButton fab = root.findViewById(R.id.coursesFab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +134,9 @@ public class HomeFragment extends Fragment {
                 Course course = new Course(courseName, courseInstructor, courseLocation, courseDays, startTime, endTime, courseColor);
                 courseList.add(course);
                 Log.println(Log.INFO, "Course", course.toString());
+
+                myRecyclerViewAdapter = new CourseViewAdapter(HomeFragment.this, courseList, getContext());
+                recyclerView.setAdapter(myRecyclerViewAdapter);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,7 +149,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void saveData(List<Course> courseList) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences1", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(courseList);
@@ -150,7 +158,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadData() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences1", MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString("exam list", null);
         Type type = new TypeToken<ArrayList<Exam>>() {}.getType();

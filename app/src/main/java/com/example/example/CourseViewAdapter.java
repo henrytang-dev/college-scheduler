@@ -55,6 +55,12 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         return mData.size();
     }
 
+    public void removeItem(int position) {
+        mData.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+        fragment.saveData(mData);
+    }
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mCourseName;
         TextView mCourseLocation;
