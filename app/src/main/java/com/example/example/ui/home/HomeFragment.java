@@ -40,7 +40,6 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     List<Course> courseList;
-
     CourseViewAdapter myRecyclerViewAdapter;
     private FragmentHomeBinding binding;
 
@@ -137,6 +136,7 @@ public class HomeFragment extends Fragment {
 
                 myRecyclerViewAdapter = new CourseViewAdapter(HomeFragment.this, courseList, getContext());
                 recyclerView.setAdapter(myRecyclerViewAdapter);
+                saveData(courseList);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -149,7 +149,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void saveData(List<Course> courseList) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences1", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences courses", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(courseList);
@@ -158,10 +158,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadData() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences1", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences courses", MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("exam list", null);
-        Type type = new TypeToken<ArrayList<Exam>>() {}.getType();
+        String json = sharedPreferences.getString("course list", null);
+        Type type = new TypeToken<ArrayList<Course>>() {}.getType();
         courseList = gson.fromJson(json, type);
 
         if(courseList == null) {
