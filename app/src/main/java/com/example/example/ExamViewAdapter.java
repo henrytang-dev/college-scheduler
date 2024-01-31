@@ -31,13 +31,16 @@ import java.util.List;
 public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHolder> {
     private List<Exam> mData;
     private LayoutInflater mInflater;
-
     private ExamsFragment fragment;
+
+    private ColorMapper colorMapper;
+
 
     public ExamViewAdapter(Context context, List<Exam> mData, ExamsFragment fragment) {
         this.mData = mData;
         this.mInflater = LayoutInflater.from(context);
         this.fragment = fragment;
+        this.colorMapper = new ColorMapper(context);
     }
 
     @NonNull
@@ -63,31 +66,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         holder.mDateTime.setText(mData.get(position).getDate() + " " + time);
 
         String color = mData.get(position).getColor();
-
-        switch (color){
-            case "Red":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-            case "Blue":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_blue));
-                break;
-            case "Purple":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_purple));
-                break;
-            case "Green":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_green));
-                break;
-            case "Pink":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_pink));
-                break;
-            case "Brown":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_brown));
-                break;
-            default:
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-
-        }
+        holder.mCardView.setCardBackgroundColor(colorMapper.getColorResourceId(color));
     }
 
     @Override

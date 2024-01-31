@@ -116,8 +116,6 @@ public class ExamsFragment extends Fragment {
                 myRecyclerViewAdapter = new ExamViewAdapter(getContext(), examList, ExamsFragment.this);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
                 myRecyclerViewAdapter.sortDate();
-
-
             }
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
