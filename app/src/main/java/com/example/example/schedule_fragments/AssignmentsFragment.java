@@ -35,14 +35,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * This fragment displays a list of assignments and provides functionality for adding, sorting, and editing assignments.
+ * It uses a RecyclerView to display the assignments, and a FloatingActionButton for adding new assignments.
+ * The fragment also includes a Spinner for sorting assignments by due date or class name.
+ */
 public class AssignmentsFragment extends Fragment {
 
     RecyclerView recyclerView;
     MyRecyclerViewAdapter myRecyclerViewAdapter;
     List<Assignment> assignmentList;
 
-
+    /**
+     * Called to create and return the view hierarchy associated with the fragment.
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate views.
+     * @param container          If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +102,9 @@ public class AssignmentsFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Create and show the dialog for adding a new assignment.
+     */
     private void createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -146,6 +160,11 @@ public class AssignmentsFragment extends Fragment {
         Dialog dialog = builder.create();
         dialog.show();
     }
+    /**
+     * Save the list of assignments to SharedPreferences.
+     *
+     * @param list The list of assignments to be saved.
+     */
     public void saveData(List<Assignment> list) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -155,6 +174,9 @@ public class AssignmentsFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * Load the list of assignments from SharedPreferences.
+     */
     private void loadData() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();

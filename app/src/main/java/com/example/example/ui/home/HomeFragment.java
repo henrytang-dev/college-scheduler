@@ -41,6 +41,7 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     List<Course> courseList;
     CourseViewAdapter myRecyclerViewAdapter;
+    TextView addCourseIndicator;
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -51,6 +52,8 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 //        View root = binding.getRoot();
+
+        addCourseIndicator = root.findViewById(R.id.addCourseIndicator);
 
         recyclerView = root.findViewById(R.id.courses_list_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -167,6 +170,12 @@ public class HomeFragment extends Fragment {
         if(courseList == null) {
             courseList = new ArrayList<>();
         }
+    }
+    public void setAddCourseIndicatorInvisible() {
+        addCourseIndicator.setVisibility(View.INVISIBLE);
+    }
+    public void setAddCourseIndicatorVisible() {
+        addCourseIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override

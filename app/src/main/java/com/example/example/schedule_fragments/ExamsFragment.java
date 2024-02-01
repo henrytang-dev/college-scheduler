@@ -33,7 +33,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This fragment displays a list of exams and provides functionality for adding and sorting exams.
+ * It uses a RecyclerView to display the exams and a FloatingActionButton for adding new exams.
+ * The fragment also includes a Spinner for sorting exams by date.
+ */
 public class ExamsFragment extends Fragment {
 
     RecyclerView recyclerView;
@@ -41,6 +45,14 @@ public class ExamsFragment extends Fragment {
     ExamViewAdapter myRecyclerViewAdapter;
     List<Exam> examList;
 
+    /**
+     * Called to create and return the view hierarchy associated with the fragment.
+     *
+     * @param inflater           The LayoutInflater object that can be used to inflate views.
+     * @param container          If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +79,9 @@ public class ExamsFragment extends Fragment {
         // Inflate the layout for this fragment
         return root;
     }
+    /**
+     * Create and show the dialog for adding a new exam.
+     */
     private void createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -129,6 +144,11 @@ public class ExamsFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Save the list of exams to SharedPreferences.
+     *
+     * @param list The list of exams to be saved.
+     */
     public void saveData(List<Exam> list) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -138,6 +158,9 @@ public class ExamsFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * Load the list of exams from SharedPreferences.
+     */
     private void loadData() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();

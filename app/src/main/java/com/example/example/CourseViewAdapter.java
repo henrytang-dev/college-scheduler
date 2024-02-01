@@ -66,14 +66,20 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         }
 
         holder.mDaysOfWeek.setText(result.toString());
-        String startTime = mData.get(position).getCourseStartTime();
-        String endTime = mData.get(position).getCourseEndTime();
+        String startTime = remove24Hour(mData.get(position).getCourseStartTime());
+        String endTime = remove24Hour(mData.get(position).getCourseEndTime());
+
+
         String formattedTime = mContext.getString(R.string.class_time_format, startTime, endTime);
         holder.mClassTime.setText(formattedTime);
         holder.mCourseInstructor.setText(mData.get(position).getCourseInstructor());
         String color = mData.get(position).getCourseColor();
         Log.println(Log.INFO, "color", color);
         holder.mCardView.setCardBackgroundColor(colorMapper.getColorResourceId(color));
+
+        if(getItemCount() > 0) {
+            fragment.setAddCourseIndicatorInvisible();
+        }
     }
     @Override
     public int getItemCount() {
@@ -85,6 +91,10 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
         fragment.saveData(mData);
+
+        if(getItemCount() == 0) {
+            fragment.setAddCourseIndicatorVisible();
+        }
     }
 
     public void showEditDialog(Context context, int position, List<Course> mData) {
@@ -195,6 +205,18 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private String remove24Hour(String time) {
+        String[] timeComponents = time.split(":");
+        int hour = Integer.parseInt(timeComponents[0]);
+        String amPm = "AM";
+        if(hour > 12) {
+            hour = hour % 12;
+            amPm = "PM";
+        }
+        time = hour + ":" + timeComponents[1] + " " + amPm;
+        return time;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
