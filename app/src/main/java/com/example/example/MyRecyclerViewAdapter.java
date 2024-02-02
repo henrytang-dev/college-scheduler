@@ -35,20 +35,38 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
+/**
+ * This class represents the RecyclerView adapter for managing the display of assignments in the application.
+ * It handles addition, editing, and sorting of assignments and utilizes a custom ViewHolder for each item.
+ */
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
 
     private List<Assignment> mData;
     private LayoutInflater mInflater;
     private AssignmentsFragment fragment;
+    private ColorMapper colorMapper;
 
-
-
+    /**
+     * Constructor for the MyRecyclerViewAdapter.
+     *
+     * @param context   The context of the application.
+     * @param data      The list of Assignment objects to be displayed.
+     * @param fragment  The associated AssignmentsFragment.
+     */
     public MyRecyclerViewAdapter(Context context, List<Assignment> data, AssignmentsFragment fragment) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.fragment = fragment;
+        this.colorMapper = new ColorMapper(context);
     }
+
+    /**
+     * Called when RecyclerView needs a new ViewHolder instance.
+     *
+     * @param parent   The ViewGroup into which the new View will be added.
+     * @param viewType The type of the new View.
+     * @return A new ViewHolder that holds a View representing an assignment item.
+     */
     @NonNull
     @Override
     public MyRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -56,6 +74,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         return new ViewHolder(view);
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     *
+     * @param holder   The ViewHolder to bind the data to.
+     * @param position The position of the data in the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull MyRecyclerViewAdapter.ViewHolder holder, int position) {
         holder.mClassName.setText(mData.get(position).getClassName());
@@ -63,33 +87,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         holder.mDate.setText(mData.get(position).getDueDate());
 
         String color = mData.get(position).getColor();
-
-        switch (color){
-            case "Red":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-            case "Blue":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_blue));
-                break;
-            case "Purple":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_purple));
-                break;
-            case "Green":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_green));
-                break;
-            case "Pink":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_pink));
-                break;
-            case "Brown":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_brown));
-                break;
-            default:
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-
-        }
+        holder.mCardView.setCardBackgroundColor(colorMapper.getColorResourceId(color));
     }
 
+    /**
+     * Sorts the list of assignments by due date and notifies the fragment to save the updated data.
+     */
     public void sortDate() {
         Collections.sort(mData, new Comparator<Assignment>() {
             @Override
@@ -108,6 +111,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         notifyDataSetChanged();
         fragment.saveData(mData);
     }
+
+    /**
+     * Sorts the list of assignments by class name and notifies the fragment to save the updated data.
+     */
     public void sortClasses() {
         Collections.sort(mData, new Comparator<Assignment>() {
             @Override
@@ -119,17 +126,35 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         notifyDataSetChanged();
         fragment.saveData(mData);
     }
-
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in the adapter's data set.
+     */
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
+    /**
+     * Removes an item at the specified position and notifies the fragment to save the updated data.
+     *
+     * @param position The position of the item to be removed.
+     */
     public void removeItem(int position) {
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
+        fragment.saveData(mData);
     }
+
+    /**
+     * Shows an edit dialog for modifying an existing assignment at the specified position.
+     *
+     * @param context  The context in which the dialog will be displayed.
+     * @param position The position of the assignment to be edited.
+     * @param mData    The list of assignments.
+     */
 
     public void showEditDialog(Context context, int position, List<Assignment> mData) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -194,7 +219,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         alertDialog.show();
     }
 
-
+    /**
+     * The ViewHolder class represents each item in the RecyclerView.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mClassName;
         TextView mTitle;
@@ -203,6 +230,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         ImageButton mCheckBtn;
         ImageButton mEditBtn;
 
+        /**
+         * Constructor for the ViewHolder class.
+         *
+         * @param itemView The View object representing an assignment item.
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             mClassName = itemView.findViewById(R.id.className);

@@ -16,6 +16,7 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="class_time_format">%1$s - %2$s</string>
 
     <string name="edit_task_description">Edit Task</string>
     <string name="priority_string">Set Priority</string>
@@ -23,4 +24,5 @@
     <string name="med_priority">Medium Priority</string>
     <string name="low_priority">Low Priority</string>
     <string name="add_button">Add</string>
+    <string name="menu_todo">Todo</string>
 </resources>

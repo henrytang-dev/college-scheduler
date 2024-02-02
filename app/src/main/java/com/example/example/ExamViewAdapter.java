@@ -28,18 +28,39 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class represents the RecyclerView adapter for managing the display of exams in the application.
+ * It handles addition, editing, and sorting of exams, and utilizes a custom ViewHolder for each item.
+ */
 public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHolder> {
     private List<Exam> mData;
     private LayoutInflater mInflater;
-
     private ExamsFragment fragment;
 
+    private ColorMapper colorMapper;
+
+
+    /**
+     * Constructor for the ExamViewAdapter.
+     *
+     * @param context   The context of the application.
+     * @param mData     The list of Exam objects to be displayed.
+     * @param fragment  The associated ExamsFragment.
+     */
     public ExamViewAdapter(Context context, List<Exam> mData, ExamsFragment fragment) {
         this.mData = mData;
         this.mInflater = LayoutInflater.from(context);
         this.fragment = fragment;
+        this.colorMapper = new ColorMapper(context);
     }
 
+    /**
+     * Called when RecyclerView needs a new ViewHolder instance.
+     *
+     * @param parent   The ViewGroup into which the new View will be added.
+     * @param viewType The type of the new View.
+     * @return A new ViewHolder that holds a View representing an exam item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,6 +68,12 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     *
+     * @param holder   The ViewHolder to bind the data to.
+     * @param position The position of the data in the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.mExamName.setText(mData.get(position).getExamName());
@@ -59,48 +86,38 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
             hour = hour % 12;
             amPm = "PM";
         }
-        time = String.valueOf(hour) + ":" + timeComponents[1] + " " + amPm;
+        time = hour + ":" + timeComponents[1] + " " + amPm;
         holder.mDateTime.setText(mData.get(position).getDate() + " " + time);
 
         String color = mData.get(position).getColor();
-
-        switch (color){
-            case "Red":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-            case "Blue":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_blue));
-                break;
-            case "Purple":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_purple));
-                break;
-            case "Green":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_green));
-                break;
-            case "Pink":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_pink));
-                break;
-            case "Brown":
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_brown));
-                break;
-            default:
-                holder.mCardView.setCardBackgroundColor(ContextCompat.getColor(this.mInflater.getContext(), R.color.assignment_red));
-                break;
-
-        }
+        holder.mCardView.setCardBackgroundColor(colorMapper.getColorResourceId(color));
     }
 
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in the adapter's data set.
+     */
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
+    /**
+     * Removes an item at the specified position and notifies the fragment to save the updated data.
+     *
+     * @param position The position of the item to be removed.
+     */
     public void removeItem(int position) {
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
+        fragment.saveData(mData);
     }
 
+    /**
+     * Sorts the list of exams by date and notifies the fragment to save the updated data.
+     */
     public void sortDate() {
         Collections.sort(mData, new Comparator<Exam>() {
             @Override
@@ -120,6 +137,13 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         fragment.saveData(mData);
     }
 
+    /**
+     * Shows an edit dialog for modifying an existing exam at the specified position.
+     *
+     * @param context  The context in which the dialog will be displayed.
+     * @param position The position of the exam to be edited.
+     * @param mData    The list of exams.
+     */
     public void showEditDialog(Context context, int position, List<Exam> mData) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -194,6 +218,9 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         alertDialog.show();
     }
 
+    /**
+     * The ViewHolder class represents each item in the RecyclerView.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mExamName;
         TextView mLocation;
@@ -202,8 +229,15 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         ImageButton mCheckBtn;
         ImageButton mEditBtn;
 
+        /**
+         * Constructor for the ViewHolder class.
+         *
+         * @param itemView The View object representing an exam item.
+         */
         public ViewHolder(View itemView) {
             super(itemView);
+
+            // Initialize UI components in the ViewHolder
             mExamName = itemView.findViewById(R.id.examName);
             mLocation = itemView.findViewById(R.id.location);
             mDateTime = itemView.findViewById(R.id.dateTime);
@@ -211,6 +245,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
             mCheckBtn = itemView.findViewById(R.id.examCheckBtn);
             mEditBtn = itemView.findViewById(R.id.examEditBtn);
 
+            // Set up click listeners for check and edit buttons
             mCheckBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
