@@ -1,4 +1,4 @@
-package com.example.example;
+package com.example.example.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,20 +19,21 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.example.ui.home.HomeFragment;
-
-import org.w3c.dom.Text;
+import com.example.example.ColorMapper;
+import com.example.example.R;
+import com.example.example.models.Course;
+import com.example.example.ui.courses.CoursesFragment;
 
 import java.util.List;
 
 public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.ViewHolder> {
     private List<Course> mData;
     private LayoutInflater mInflater;
-    private HomeFragment fragment;
+    private CoursesFragment fragment;
     private Context mContext;
     private ColorMapper colorMapper;
 
-    public CourseViewAdapter(HomeFragment fragment, List<Course> data, Context context) {
+    public CourseViewAdapter(CoursesFragment fragment, List<Course> data, Context context) {
         this.mContext = context;
         this.mInflater = LayoutInflater.from(fragment.getContext());
         this.mData = data;

@@ -16,14 +16,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
-import com.example.example.Assignment;
-import com.example.example.Exam;
-import com.example.example.ExamViewAdapter;
+import com.example.example.adapters.MyRecyclerViewAdapter;
+import com.example.example.models.Assignment;
+import com.example.example.models.Course;
+import com.example.example.models.Exam;
+import com.example.example.adapters.ExamViewAdapter;
 import com.example.example.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -44,6 +48,7 @@ public class ExamsFragment extends Fragment {
 
     ExamViewAdapter myRecyclerViewAdapter;
     List<Exam> examList;
+    List<Course> courseList;
 
     /**
      * Called to create and return the view hierarchy associated with the fragment.
@@ -64,6 +69,10 @@ public class ExamsFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         loadData();
+        courseList = Course.loadCourseListData(getContext());
+        for(Exam exam : examList) {
+            exam.setCourse(Course.getCourseFromName(exam.getExamName(), courseList));
+        }
 
         myRecyclerViewAdapter = new ExamViewAdapter(getContext(), examList, ExamsFragment.this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
@@ -88,17 +97,15 @@ public class ExamsFragment extends Fragment {
 
         // Inflate the dialog layout
         View dialogView = inflater.inflate(R.layout.create_exam_dialog, null);
-        EditText examNameText = dialogView.findViewById(R.id.examNameText);
-        EditText locationText = dialogView.findViewById(R.id.locationText);
-        Spinner spinner = dialogView.findViewById(R.id.examColorSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.color_array,
-                android.R.layout.simple_spinner_item
-        );
+        Spinner examNameSpinner = dialogView.findViewById(R.id.examNameSpinner);
+        ArrayAdapter<String> classAdapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_item, Course.setupClassArray(courseList));
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        examNameSpinner.setAdapter(classAdapter);
+
+        EditText locationText = dialogView.findViewById(R.id.locationText);
+
 
         DatePicker datePicker = dialogView.findViewById(R.id.examDatePicker);
         TimePicker timePicker = dialogView.findViewById(R.id.timePicker);
@@ -106,42 +113,58 @@ public class ExamsFragment extends Fragment {
         // Set the inflated view to the builder
         builder.setView(dialogView);
 
-        builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String examName = examNameText.getText().toString();
-                String location = locationText.getText().toString();
-
-                String day = String.valueOf(datePicker.getDayOfMonth());
-                String month = String.valueOf(datePicker.getMonth()+1);
-                String year = String.valueOf(datePicker.getYear());
-
-                String hour = String.valueOf(timePicker.getHour());
-                String minute = String.format("%02d", timePicker.getMinute());
-
-                String time = hour + ":" + minute;
-
-                String color = spinner.getSelectedItem().toString();
-
-                String date = month + "/" + day + "/" + year;
-
-                Exam exam = new Exam(examName, location, date, time, color);
-                examList.add(exam);
-
-                myRecyclerViewAdapter = new ExamViewAdapter(getContext(), examList, ExamsFragment.this);
-                recyclerView.setAdapter(myRecyclerViewAdapter);
-                myRecyclerViewAdapter.sortDate();
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
 
-        // Create and show the dialog
-        Dialog dialog = builder.create();
-        dialog.show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String examName = examNameSpinner.getSelectedItem().toString();
+                        if(examName.equals("Pick a class")) {
+                            Toast.makeText(getContext(), "Please pick a class", Toast.LENGTH_LONG).show();
+                        } else {
+                            String location = locationText.getText().toString();
+
+                            String day = String.valueOf(datePicker.getDayOfMonth());
+                            String month = String.valueOf(datePicker.getMonth()+1);
+                            String year = String.valueOf(datePicker.getYear());
+
+                            String hour = String.valueOf(timePicker.getHour());
+                            String minute = String.format("%02d", timePicker.getMinute());
+
+                            String time = hour + ":" + minute;
+
+                            Course course = Course.getCourseFromName(examName, courseList);
+
+                            String date = month + "/" + day + "/" + year;
+
+                            Exam exam = new Exam(examName, location, date, time, course);
+                            examList.add(exam);
+
+                            myRecyclerViewAdapter = new ExamViewAdapter(getContext(), examList, ExamsFragment.this);
+                            recyclerView.setAdapter(myRecyclerViewAdapter);
+                            myRecyclerViewAdapter.sortDate();
+
+                            dialog.dismiss();
+
+                        }
+                    }
+                });
+            }
+        });
+
+
+        alertDialog.show();
     }
 
     /**
@@ -172,4 +195,5 @@ public class ExamsFragment extends Fragment {
             examList = new ArrayList<>();
         }
     }
+
 }

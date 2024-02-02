@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,19 +20,20 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.example.example.Assignment;
-import com.example.example.MyRecyclerViewAdapter;
+import com.example.example.models.Assignment;
+import com.example.example.adapters.MyRecyclerViewAdapter;
 import com.example.example.R;
+import com.example.example.models.Course;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This fragment displays a list of assignments and provides functionality for adding, sorting, and editing assignments.
@@ -45,6 +45,7 @@ public class AssignmentsFragment extends Fragment {
     RecyclerView recyclerView;
     MyRecyclerViewAdapter myRecyclerViewAdapter;
     List<Assignment> assignmentList;
+    List<Course> courseList;
 
     /**
      * Called to create and return the view hierarchy associated with the fragment.
@@ -64,6 +65,11 @@ public class AssignmentsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         loadData();
+        courseList = Course.loadCourseListData(getContext());
+        for(Assignment assignment : assignmentList) {
+            assignment.setCourse(Course.getCourseFromName(assignment.getClassName(), courseList));
+        }
+
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
 
@@ -111,54 +117,75 @@ public class AssignmentsFragment extends Fragment {
 
         // Inflate the dialog layout
         View dialogView = inflater.inflate(R.layout.create_assignment_dialog, null);
-        EditText classNameText = dialogView.findViewById(R.id.classNameText);
-        EditText assignmentTitleText = dialogView.findViewById(R.id.titleText);
-        Spinner spinner = dialogView.findViewById(R.id.colorSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.color_array,
-                android.R.layout.simple_spinner_item
-        );
+        Spinner classSpinner = dialogView.findViewById(R.id.classSpinner);
+        ArrayAdapter<String> classAdapter = new ArrayAdapter<String>
+                (getContext(), android.R.layout.simple_spinner_item, Course.setupClassArray(courseList));
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        classSpinner.setAdapter(classAdapter);
+
+        EditText assignmentTitleText = dialogView.findViewById(R.id.titleText);
+//        Spinner colorSpinner = dialogView.findViewById(R.id.colorSpinner);
+//        ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(
+//                getContext(),
+//                R.array.color_array,
+//                android.R.layout.simple_spinner_item
+//        );
+//
+//        colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        colorSpinner.setAdapter(colorAdapter);
 
         DatePicker dueDatePicker = dialogView.findViewById(R.id.datePicker);
 
         // Set the inflated view to the builder
         builder.setView(dialogView);
 
-        builder.setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String className = classNameText.getText().toString();
-                String title = assignmentTitleText.getText().toString();
-                String day = String.valueOf(dueDatePicker.getDayOfMonth());
-                String month = String.valueOf(dueDatePicker.getMonth()+1);
-                String year = String.valueOf(dueDatePicker.getYear());
-                String color = spinner.getSelectedItem().toString();
-
-                String date = month + "/" + day + "/" + year;
-
-                Assignment hw = new Assignment(className, title, date, color);
-                assignmentList.add(hw);
-
-                myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
-                recyclerView.setAdapter(myRecyclerViewAdapter);
-
-                saveData(assignmentList);
-
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
 
-        // Create and show the dialog
-        Dialog dialog = builder.create();
-        dialog.show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String className = classSpinner.getSelectedItem().toString();
+                        if(className.equals("Pick a class")) {
+                            Toast.makeText(getContext(), "Please pick a class", Toast.LENGTH_LONG).show();
+                        } else {
+                            String title = assignmentTitleText.getText().toString();
+                            String day = String.valueOf(dueDatePicker.getDayOfMonth());
+                            String month = String.valueOf(dueDatePicker.getMonth()+1);
+                            String year = String.valueOf(dueDatePicker.getYear());
+                            Course course = Course.getCourseFromName(className, courseList);
+
+                            String date = month + "/" + day + "/" + year;
+
+                            Assignment hw = new Assignment(className, title, date, course);
+                            assignmentList.add(hw);
+
+                            myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
+                            recyclerView.setAdapter(myRecyclerViewAdapter);
+
+                            saveData(assignmentList);
+
+                            dialog.dismiss();
+
+                        }
+                    }
+                });
+            }
+        });
+
+
+        alertDialog.show();
     }
     /**
      * Save the list of assignments to SharedPreferences.

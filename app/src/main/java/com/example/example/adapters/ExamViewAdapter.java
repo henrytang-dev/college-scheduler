@@ -1,4 +1,4 @@
-package com.example.example;
+package com.example.example.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,9 +18,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.example.ColorMapper;
+import com.example.example.R;
+import com.example.example.models.Course;
+import com.example.example.models.Exam;
 import com.example.example.schedule_fragments.ExamsFragment;
 
 import java.text.ParseException;
@@ -38,6 +42,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
     private ExamsFragment fragment;
 
     private ColorMapper colorMapper;
+    List<Course> courseList;
 
 
     /**
@@ -52,6 +57,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         this.mInflater = LayoutInflater.from(context);
         this.fragment = fragment;
         this.colorMapper = new ColorMapper(context);
+        courseList = Course.loadCourseListData(context);
     }
 
     /**
@@ -151,25 +157,24 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         builder.setView(dialogView);
 
         // Find and set up UI components in the dialog
-        EditText examNameText = dialogView.findViewById(R.id.examNameText);
+        Spinner examNameSpinner = dialogView.findViewById(R.id.examNameSpinner);
+        ArrayAdapter<String> classAdapter = new ArrayAdapter<String>
+                (mInflater.getContext(), android.R.layout.simple_spinner_item, Course.setupClassArray(courseList));
+
+        classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        examNameSpinner.setAdapter(classAdapter);
+
         EditText locationText = dialogView.findViewById(R.id.locationText);
         DatePicker datePicker = dialogView.findViewById(R.id.examDatePicker);
         TimePicker timePicker = dialogView.findViewById(R.id.timePicker);
-        Spinner spinner = dialogView.findViewById(R.id.examColorSpinner);
 
         // Get the existing Assignment object at the given position
         Exam existingExam = mData.get(position);
 
-        // Set the existing values in the EditText fields
-        examNameText.setText(existingExam.getExamName());
+        int classSpinnerPosition = classAdapter.getPosition(existingExam.getExamName());
+        examNameSpinner.setSelection(classSpinnerPosition);
+
         locationText.setText(existingExam.getLocation());
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.mInflater.getContext(), R.array.color_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        int spinnerPosition = adapter.getPosition(existingExam.getColor());
-        spinner.setSelection(spinnerPosition);
 
         String[] dateComponents = existingExam.getDate().split("/");
         datePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
@@ -177,44 +182,62 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         String[] timeComponents = existingExam.getTime().split(":");
         timePicker.setHour(Integer.parseInt(timeComponents[0]));
         timePicker.setMinute(Integer.parseInt(timeComponents[1]));
-        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String newExamName = examNameText.getText().toString();
-                String newLocation = locationText.getText().toString();
 
-                String day = String.valueOf(datePicker.getDayOfMonth());
-                String month = String.valueOf(datePicker.getMonth()+1);
-                String year = String.valueOf(datePicker.getYear());
-                String color = spinner.getSelectedItem().toString();
-
-                String date = month + "/" + day + "/" + year;
-
-                String hour = String.valueOf(timePicker.getHour());
-                String minute = String.format("%02d", timePicker.getMinute());
-
-
-                String time = hour + ":" + minute;
-
-                existingExam.setExamName(newExamName);
-                existingExam.setLocation(newLocation);
-                existingExam.setDate(date);
-                existingExam.setColor(color);
-                existingExam.setTime(time);
-
-                notifyItemChanged(position);
-                sortDate();
-
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
 
-        // Show the dialog
         AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newExamName = examNameSpinner.getSelectedItem().toString();
+                        if(newExamName.equals("Pick a class")) {
+                            Toast.makeText(mInflater.getContext(), "Please pick a class", Toast.LENGTH_LONG).show();
+                        } else {
+                            String newLocation = locationText.getText().toString();
+
+                            String day = String.valueOf(datePicker.getDayOfMonth());
+                            String month = String.valueOf(datePicker.getMonth()+1);
+                            String year = String.valueOf(datePicker.getYear());
+                            Course course = Course.getCourseFromName(newExamName, courseList);
+
+                            String date = month + "/" + day + "/" + year;
+
+                            String hour = String.valueOf(timePicker.getHour());
+                            String minute = String.format("%02d", timePicker.getMinute());
+
+
+                            String time = hour + ":" + minute;
+
+                            existingExam.setExamName(newExamName);
+                            existingExam.setLocation(newLocation);
+                            existingExam.setDate(date);
+                            existingExam.setCourse(course);
+                            existingExam.setTime(time);
+
+                            notifyItemChanged(position);
+                            sortDate();
+
+                            dialog.dismiss();
+
+                        }
+                    }
+                });
+            }
+        });
+
+
+
+        // Show the dialog
         alertDialog.show();
     }
 

@@ -1,4 +1,4 @@
-package com.example.example;
+package com.example.example.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.example.schedule_fragments.AssignmentsFragment;
 import com.example.example.schedule_fragments.ExamsFragment;
-import com.example.example.ui.gallery.GalleryFragment;
+import com.example.example.ui.schedule.ScheduleFragment;
 
 /**
  * This class represents a ViewPager2 adapter responsible for handling the fragments displayed in a ViewPager.
@@ -19,7 +19,7 @@ public class MyViewPagerAdapter extends FragmentStateAdapter {
      *
      * @param fragmentActivity The parent Fragment that will host the ViewPager.
      */
-    public MyViewPagerAdapter(@NonNull GalleryFragment fragmentActivity) {
+    public MyViewPagerAdapter(@NonNull ScheduleFragment fragmentActivity) {
         super(fragmentActivity);
     }
 

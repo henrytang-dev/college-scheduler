@@ -1,18 +1,14 @@
-package com.example.example.ui.slideshow;
-
-import static java.security.AccessController.getContext;
+package com.example.example.ui.todo;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
@@ -21,12 +17,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.example.adapters.ToDoListAdapter;
+import com.example.example.models.Task;
 import com.example.example.databinding.FragmentSlideshowBinding;
 
 import com.example.example.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.Date;
 
 public class TodoFragment extends Fragment {
 

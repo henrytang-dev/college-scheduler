@@ -1,4 +1,4 @@
-package com.example.example.ui.slideshow;
+package com.example.example.models;
 
 /**
  * Created by enyason on 5/28/18.

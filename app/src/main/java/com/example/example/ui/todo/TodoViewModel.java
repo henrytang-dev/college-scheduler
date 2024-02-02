@@ -1,4 +1,4 @@
-package com.example.example.ui.slideshow;
+package com.example.example.ui.todo;
 
 
 import android.app.Application;
@@ -8,8 +8,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.example.models.Task;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class TodoViewModel extends AndroidViewModel {

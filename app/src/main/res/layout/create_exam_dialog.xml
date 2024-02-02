@@ -19,15 +19,12 @@
             android:textSize="30sp"/>
 
 
-        <EditText
-            android:id="@+id/examNameText"
-            android:layout_width="200dp"
+        <Spinner
+            android:id="@+id/examNameSpinner"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Exam Name"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"/>
+            android:layout_marginLeft="10dp"/>
 
 
         <EditText
@@ -39,13 +36,6 @@
             android:layout_marginLeft="10dp"
             android:textColor="@android:color/black"
             android:textSize="15sp"/>
-
-        <Spinner
-            android:id="@+id/examColorSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"/>
 
         <TextView
             android:layout_width="wrap_content"

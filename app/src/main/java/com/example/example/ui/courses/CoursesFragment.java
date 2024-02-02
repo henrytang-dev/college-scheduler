@@ -1,4 +1,4 @@
-package com.example.example.ui.home;
+package com.example.example.ui.courses;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -23,11 +23,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.example.CourseViewAdapter;
-import com.example.example.Exam;
-import com.example.example.ExamViewAdapter;
+import com.example.example.adapters.CourseViewAdapter;
 import com.example.example.R;
-import com.example.example.Course;
+import com.example.example.models.Course;
 import com.example.example.databinding.FragmentHomeBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -37,7 +35,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class CoursesFragment extends Fragment {
     RecyclerView recyclerView;
     List<Course> courseList;
     CourseViewAdapter myRecyclerViewAdapter;
@@ -46,12 +44,13 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        CoursesViewModel homeViewModel =
+                new ViewModelProvider(this).get(CoursesViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 //        View root = binding.getRoot();
+
 
         addCourseIndicator = root.findViewById(R.id.addCourseIndicator);
 
@@ -61,7 +60,7 @@ public class HomeFragment extends Fragment {
 
         loadData();
 
-        myRecyclerViewAdapter = new CourseViewAdapter(HomeFragment.this, courseList, getContext());
+        myRecyclerViewAdapter = new CourseViewAdapter(CoursesFragment.this, courseList, getContext());
         recyclerView.setAdapter(myRecyclerViewAdapter);
 
         FloatingActionButton fab = root.findViewById(R.id.coursesFab);
@@ -137,7 +136,7 @@ public class HomeFragment extends Fragment {
                 courseList.add(course);
                 Log.println(Log.INFO, "Course", course.toString());
 
-                myRecyclerViewAdapter = new CourseViewAdapter(HomeFragment.this, courseList, getContext());
+                myRecyclerViewAdapter = new CourseViewAdapter(CoursesFragment.this, courseList, getContext());
                 recyclerView.setAdapter(myRecyclerViewAdapter);
                 saveData(courseList);
             }

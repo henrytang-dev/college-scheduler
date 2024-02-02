@@ -1,4 +1,4 @@
-package com.example.example;
+package com.example.example.models;
 
 import android.os.Build;
 
@@ -16,8 +16,7 @@ public class Assignment {
     private String className;
     private String assignmentTitle;
     private String dueDate;
-
-    private String color;
+    private Course course;
 
     /**
      * Constructor for the Assignment class.
@@ -25,13 +24,13 @@ public class Assignment {
      * @param className       The name of the class for which the assignment is assigned.
      * @param assignmentTitle The title of the assignment.
      * @param dueDate         The due date of the assignment in the format "MM/dd/yyyy".
-     * @param color           The color associated with the assignment for display purposes.
+     * @param course           The course associated with the assignment.
      */
-    public Assignment(String className, String assignmentTitle, String dueDate, String color) {
+    public Assignment(String className, String assignmentTitle, String dueDate, Course course) {
         this.className = className;
         this.assignmentTitle = assignmentTitle;
         this.dueDate = dueDate;
-        this.color = color;
+        this.course = course;
     }
 
     /**
@@ -94,7 +93,7 @@ public class Assignment {
      * @return The color of the assignment.
      */
     public String getColor() {
-        return color;
+        return course.getCourseColor();
     }
 
     /**
@@ -102,9 +101,6 @@ public class Assignment {
      *
      * @param color The new color for the assignment.
      */
-    public void setColor(String color) {
-        this.color = color;
-    }
 
     /**
      * Convert the due date to a Date object.
@@ -118,4 +114,21 @@ public class Assignment {
         return date;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    @Override
+    public String toString() {
+        return "Assignment{" +
+                "className='" + className + '\'' +
+                ", assignmentTitle='" + assignmentTitle + '\'' +
+                ", dueDate='" + dueDate + '\'' +
+                ", course=" + course +
+                '}';
+    }
 }

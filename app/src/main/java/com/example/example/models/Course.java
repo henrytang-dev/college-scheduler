@@ -1,4 +1,16 @@
-package com.example.example;
+package com.example.example.models;
+
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Course {
     private String courseName;
@@ -125,6 +137,37 @@ public class Course {
      */
     public void setCourseColor(String courseColor) {
         this.courseColor = courseColor;
+    }
+
+
+    public static ArrayList<Course> loadCourseListData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences courses", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("course list", null);
+        Type type = new TypeToken<ArrayList<Course>>() {}.getType();
+        ArrayList<Course> courseList = gson.fromJson(json, type);
+
+        if(courseList == null) {
+            courseList = new ArrayList<>();
+        }
+        return courseList;
+    }
+    public static ArrayList<String> setupClassArray(List<Course> courseList) {
+        ArrayList<String> classNameArray =  new ArrayList<>();
+        classNameArray.add("Pick a class");
+        for(Course course : courseList) {
+            classNameArray.add(course.getCourseName());
+        }
+        return classNameArray;
+    }
+
+    public static Course getCourseFromName(String courseName, List<Course> courseList) {
+        for(Course course : courseList) {
+            if(course.getCourseName().equals(courseName)) {
+                return course;
+            }
+        }
+        return null;
     }
 
     public String toString() {

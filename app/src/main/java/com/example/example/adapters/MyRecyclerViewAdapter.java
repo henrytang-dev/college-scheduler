@@ -1,14 +1,14 @@
-package com.example.example;
+package com.example.example.adapters;
 
 
 
-import static java.security.AccessController.getContext;
+import static android.app.PendingIntent.getActivity;
+import static android.content.Context.MODE_PRIVATE;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.util.Log;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +23,24 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.example.ColorMapper;
+import com.example.example.R;
+import com.example.example.models.Assignment;
+import com.example.example.models.Course;
 import com.example.example.schedule_fragments.AssignmentsFragment;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+
 /**
  * This class represents the RecyclerView adapter for managing the display of assignments in the application.
  * It handles addition, editing, and sorting of assignments and utilizes a custom ViewHolder for each item.
@@ -45,6 +51,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private LayoutInflater mInflater;
     private AssignmentsFragment fragment;
     private ColorMapper colorMapper;
+    List<Course> courseList;
 
     /**
      * Constructor for the MyRecyclerViewAdapter.
@@ -58,6 +65,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         this.mData = data;
         this.fragment = fragment;
         this.colorMapper = new ColorMapper(context);
+        courseList = Course.loadCourseListData(context);
     }
 
     /**
@@ -163,59 +171,75 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         builder.setView(dialogView);
 
         // Find and set up UI components in the dialog
-        EditText classNameText = dialogView.findViewById(R.id.classNameText);
+        Spinner classSpinner = dialogView.findViewById(R.id.classSpinner);
+        ArrayAdapter<String> classAdapter = new ArrayAdapter<String>
+                (mInflater.getContext(), android.R.layout.simple_spinner_item, Course.setupClassArray(courseList));
+
+        classAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        classSpinner.setAdapter(classAdapter);
+
         EditText titleText = dialogView.findViewById(R.id.titleText);
         DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
-        Spinner spinner = dialogView.findViewById(R.id.colorSpinner);
 
         // Get the existing Assignment object at the given position
         Assignment existingAssignment = mData.get(position);
 
-        // Set the existing values in the EditText fields
-        classNameText.setText(existingAssignment.getClassName());
+        int classSpinnerPosition = classAdapter.getPosition(existingAssignment.getClassName());
+        classSpinner.setSelection(classSpinnerPosition);
+
         titleText.setText(existingAssignment.getAssignmentTitle());
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.mInflater.getContext(), R.array.color_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        int spinnerPosition = adapter.getPosition(existingAssignment.getColor());
-        spinner.setSelection(spinnerPosition);
 
         String[] dateComponents = existingAssignment.getDueDate().split("/");
         datePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
 
-        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String newClassName = classNameText.getText().toString();
-                String newTitle = titleText.getText().toString();
-
-                String day = String.valueOf(datePicker.getDayOfMonth());
-                String month = String.valueOf(datePicker.getMonth()+1);
-                String year = String.valueOf(datePicker.getYear());
-                String color = spinner.getSelectedItem().toString();
-
-                String date = month + "/" + day + "/" + year;
-
-                existingAssignment.setAssignmentTitle(newTitle);
-                existingAssignment.setClassName(newClassName);
-                existingAssignment.setDueDate(date);
-                existingAssignment.setColor(color);
-
-                notifyItemChanged(position);
-                fragment.saveData(mData);
-
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save, null);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
         });
 
-        // Show the dialog
         AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button positiveButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+                positiveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String newClassName = classSpinner.getSelectedItem().toString();
+                        if(newClassName.equals("Pick a class")) {
+                            Toast.makeText(mInflater.getContext(), "Please pick a class", Toast.LENGTH_LONG).show();
+                        } else {
+                            String newTitle = titleText.getText().toString();
+
+                            String day = String.valueOf(datePicker.getDayOfMonth());
+                            String month = String.valueOf(datePicker.getMonth()+1);
+                            String year = String.valueOf(datePicker.getYear());
+                            Course course = Course.getCourseFromName(newClassName, courseList);
+
+                            String date = month + "/" + day + "/" + year;
+
+                            existingAssignment.setAssignmentTitle(newTitle);
+                            existingAssignment.setClassName(newClassName);
+                            existingAssignment.setDueDate(date);
+                            existingAssignment.setCourse(course);
+
+                            notifyItemChanged(position);
+                            fragment.saveData(mData);
+
+                            dialog.dismiss();
+
+                        }
+                    }
+                });
+            }
+        });
+
+
+
+        // Show the dialog
         alertDialog.show();
     }
 

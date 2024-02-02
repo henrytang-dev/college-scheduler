@@ -1,25 +1,20 @@
-package com.example.example.ui.gallery;
+package com.example.example.ui.schedule;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.example.MyViewPagerAdapter;
-import com.example.example.R;
+import com.example.example.adapters.MyViewPagerAdapter;
 import com.example.example.databinding.FragmentGalleryBinding;
 import com.google.android.material.tabs.TabLayout;
 
-public class GalleryFragment extends Fragment {
+public class ScheduleFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
     TabLayout tabLayout;
@@ -29,8 +24,8 @@ public class GalleryFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        GalleryViewModel galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
+        ScheduleViewModel galleryViewModel =
+                new ViewModelProvider(this).get(ScheduleViewModel.class);
 
         binding = FragmentGalleryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

@@ -1,9 +1,8 @@
-package com.example.example.ui.slideshow;
+package com.example.example.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.example.R;
+import com.example.example.models.Task;
+import com.example.example.ui.todo.TodoFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

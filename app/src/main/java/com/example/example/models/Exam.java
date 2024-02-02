@@ -1,4 +1,4 @@
-package com.example.example;
+package com.example.example.models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +13,7 @@ public class Exam {
     private String location;
     private String date;
     private String time;
-    private String color;
+    private Course course;
 
     /**
      * Constructor for the Exam class.
@@ -22,14 +22,22 @@ public class Exam {
      * @param location  The location where the exam takes place.
      * @param date      The date of the exam in the format "MM/dd/yyyy".
      * @param time      The time of the exam in the format "HH:mm".
-     * @param color     The color associated with the exam for display purposes.
+     * @param course     The course associated with the exam for display purposes.
      */
-    public Exam(String examName, String location, String date, String time, String color) {
+    public Exam(String examName, String location, String date, String time, Course course) {
         this.examName = examName;
         this.location = location;
         this.date = date;
         this.time = time;
-        this.color = color;
+        this.course = course;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     /**
@@ -38,16 +46,7 @@ public class Exam {
      * @return The color of the exam.
      */
     public String getColor() {
-        return color;
-    }
-
-    /**
-     * Set the color associated with the exam.
-     *
-     * @param color The new color for the exam.
-     */
-    public void setColor(String color) {
-        this.color = color;
+        return course.getCourseColor();
     }
 
     /**
