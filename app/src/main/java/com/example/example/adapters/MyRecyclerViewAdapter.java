@@ -106,8 +106,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             @Override
             public int compare(Assignment a1, Assignment a2) {
                 try {
-                    Date a = a1.convertDueDate();
-                    Date b = a2.convertDueDate();
+                    Date a = a1.convertDate();
+                    Date b = a2.convertDate();
                     return a.compareTo(b);
                 } catch (ParseException e) {
                     Toast.makeText(mInflater.getContext(), "Date threw error", Toast.LENGTH_LONG).show();
@@ -117,7 +117,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         });
 
         notifyDataSetChanged();
-        fragment.saveData(mData);
+        Assignment.saveData(mData, mInflater.getContext());
     }
 
     /**
@@ -132,7 +132,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         });
 
         notifyDataSetChanged();
-        fragment.saveData(mData);
+        Assignment.saveData(mData, mInflater.getContext());
     }
     /**
      * Returns the total number of items in the data set held by the adapter.
@@ -153,7 +153,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        fragment.saveData(mData);
+        Assignment.saveData(mData, mInflater.getContext());
     }
 
     /**
@@ -227,7 +227,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                             existingAssignment.setCourse(course);
 
                             notifyItemChanged(position);
-                            fragment.saveData(mData);
+                            Assignment.saveData(mData, mInflater.getContext());
 
                             dialog.dismiss();
 

@@ -68,7 +68,7 @@ public class ExamsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        loadData();
+        examList = Exam.loadData(getContext());
         courseList = Course.loadCourseListData(getContext());
         for(Exam exam : examList) {
             exam.setCourse(Course.getCourseFromName(exam.getExamName(), courseList));
@@ -165,35 +165,6 @@ public class ExamsFragment extends Fragment {
 
 
         alertDialog.show();
-    }
-
-    /**
-     * Save the list of exams to SharedPreferences.
-     *
-     * @param list The list of exams to be saved.
-     */
-    public void saveData(List<Exam> list) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        editor.putString("exam list", json);
-        editor.apply();
-    }
-
-    /**
-     * Load the list of exams from SharedPreferences.
-     */
-    private void loadData() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("exam list", null);
-        Type type = new TypeToken<ArrayList<Exam>>() {}.getType();
-        examList = gson.fromJson(json, type);
-
-        if(examList == null) {
-            examList = new ArrayList<>();
-        }
     }
 
 }

@@ -1,22 +1,30 @@
 package com.example.example.models;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This class represents an Assignment entity with attributes such as className, assignmentTitle, dueDate, and color.
  * It provides methods to get and set these attributes, as well as a method to convert the due date to a Date object.
  */
-public class Assignment {
+public class Assignment extends Task {
     private String className;
     private String assignmentTitle;
-    private String dueDate;
-    private Course course;
 
     /**
      * Constructor for the Assignment class.
@@ -27,9 +35,9 @@ public class Assignment {
      * @param course           The course associated with the assignment.
      */
     public Assignment(String className, String assignmentTitle, String dueDate, Course course) {
+        super(course, dueDate);
         this.className = className;
         this.assignmentTitle = assignmentTitle;
-        this.dueDate = dueDate;
         this.course = course;
     }
 
@@ -39,7 +47,7 @@ public class Assignment {
      * @return The name of the class.
      */
     public String getClassName() {
-        return className;
+        return course.getCourseName();
     }
 
     /**
@@ -57,7 +65,7 @@ public class Assignment {
      * @return The due date of the assignment.
      */
     public String getDueDate() {
-        return dueDate;
+        return date;
     }
 
     /**
@@ -84,7 +92,7 @@ public class Assignment {
      * @param dueDate The new due date of the assignment in the format "MM/dd/yyyy".
      */
     public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
+        this.date = dueDate;
     }
 
     /**
@@ -96,39 +104,45 @@ public class Assignment {
         return course.getCourseColor();
     }
 
-    /**
-     * Set the color associated with the assignment.
-     *
-     * @param color The new color for the assignment.
-     */
 
-    /**
-     * Convert the due date to a Date object.
-     *
-     * @return The Date object representing the due date of the assignment.
-     * @throws ParseException If there is an error parsing the due date string.
-     */
-    public Date convertDueDate() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M/dd/yyyy");
-        Date date = simpleDateFormat.parse(dueDate);
-        return date;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
 
     @Override
     public String toString() {
         return "Assignment{" +
                 "className='" + className + '\'' +
                 ", assignmentTitle='" + assignmentTitle + '\'' +
-                ", dueDate='" + dueDate + '\'' +
+                ", dueDate='" + date + '\'' +
                 ", course=" + course +
                 '}';
     }
+    /**
+     * Save the list of assignments to SharedPreferences.
+     *
+     * @param list The list of assignments to be saved.
+     */
+    public static void saveData(List<Assignment> list, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString("assignment list", json);
+        editor.apply();
+    }
+
+    /**
+     * Load the list of assignments from SharedPreferences.
+     */
+    public static List<Assignment> loadData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("assignment list", null);
+        Type type = new TypeToken<ArrayList<Assignment>>() {}.getType();
+        List<Assignment> assignmentList = gson.fromJson(json, type);
+
+        if(assignmentList == null) {
+            assignmentList = new ArrayList<>();
+        }
+        return assignmentList;
+    }
+
 }

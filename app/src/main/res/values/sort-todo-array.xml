@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_todo_array">
+        <item>Sort By</item>
+        <item>Priority</item>
+        <item>Assignments</item>
+        <item>Exams</item>
+    </string-array>
+</resources>

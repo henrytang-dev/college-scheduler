@@ -64,7 +64,7 @@ public class AssignmentsFragment extends Fragment {
         recyclerView = root.findViewById(R.id.assignment_list_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        loadData();
+        assignmentList = Assignment.loadData(getContext());
         courseList = Course.loadCourseListData(getContext());
         for(Assignment assignment : assignmentList) {
             assignment.setCourse(Course.getCourseFromName(assignment.getClassName(), courseList));
@@ -125,15 +125,6 @@ public class AssignmentsFragment extends Fragment {
         classSpinner.setAdapter(classAdapter);
 
         EditText assignmentTitleText = dialogView.findViewById(R.id.titleText);
-//        Spinner colorSpinner = dialogView.findViewById(R.id.colorSpinner);
-//        ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(
-//                getContext(),
-//                R.array.color_array,
-//                android.R.layout.simple_spinner_item
-//        );
-//
-//        colorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        colorSpinner.setAdapter(colorAdapter);
 
         DatePicker dueDatePicker = dialogView.findViewById(R.id.datePicker);
 
@@ -174,7 +165,7 @@ public class AssignmentsFragment extends Fragment {
                             myRecyclerViewAdapter = new MyRecyclerViewAdapter(getContext(), assignmentList, AssignmentsFragment.this);
                             recyclerView.setAdapter(myRecyclerViewAdapter);
 
-                            saveData(assignmentList);
+                            Assignment.saveData(assignmentList, getContext());
 
                             dialog.dismiss();
 
@@ -186,34 +177,6 @@ public class AssignmentsFragment extends Fragment {
 
 
         alertDialog.show();
-    }
-    /**
-     * Save the list of assignments to SharedPreferences.
-     *
-     * @param list The list of assignments to be saved.
-     */
-    public void saveData(List<Assignment> list) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-        editor.putString("assignment list", json);
-        editor.apply();
-    }
-
-    /**
-     * Load the list of assignments from SharedPreferences.
-     */
-    private void loadData() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("assignment list", null);
-        Type type = new TypeToken<ArrayList<Assignment>>() {}.getType();
-        assignmentList = gson.fromJson(json, type);
-
-        if(assignmentList == null) {
-            assignmentList = new ArrayList<>();
-        }
     }
 
 }

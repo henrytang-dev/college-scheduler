@@ -12,16 +12,24 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.example.R;
+import com.example.example.models.Assignment;
+import com.example.example.models.Exam;
 import com.example.example.models.Task;
 import com.example.example.ui.todo.TodoFragment;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,14 +45,24 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
 
     // Class variables for the List that holds task data and the Context
     private List<Task> mTaskEntries;
+    private List<Exam> examList;
+    private List<Assignment> assignmentList;
     private TodoFragment fragment;
     private Context mContext;
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
 
-    public ToDoListAdapter(Context context) {
+    public ToDoListAdapter(Context context, List<Task> taskList) {
         mContext = context;
+
+        examList = Exam.loadData(mContext);
+        assignmentList = Assignment.loadData(mContext);
+
+        taskList.addAll(examList);
+        taskList.addAll(assignmentList);
+
+        this.mTaskEntries = taskList;
     }
 
 
@@ -64,27 +82,71 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
     public void onBindViewHolder(TaskViewHolder holder, int position) {
         // Determine the values of the wanted data
         Task taskEntry = mTaskEntries.get(position);
-        String description = taskEntry.getName();
-        int priority = taskEntry.getPriority();
+        String description;
+        if(taskEntry.getClass() == Assignment.class) {
+            Assignment assignment = (Assignment) taskEntry;
+            description = assignment.getClassName() + " - " + assignment.getAssignmentTitle();
+        } else if (taskEntry.getClass() == Exam.class) {
+            Exam exam = (Exam) taskEntry;
+            description = exam.getExamName() + " - Exam";
+        } else {
+            description = "";
+        }
+        int priority = 0;
 
-        final int id = taskEntry.getId(); // get item id
-        String updatedAt = taskEntry.getUpdatedAt();
-
-
-
+        try {
+            priority = taskEntry.getPriority();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         //Set values
         holder.taskDescriptionView.setText(description);
-        holder.updatedAtView.setText(updatedAt);
-
-        // Programmatically set the text and color for the priority TextView
-        String priorityString = "" + priority; // converts int to String
-        holder.priorityView.setText(priorityString);
+        holder.updatedAtView.setText(taskEntry.getDate());
 
         GradientDrawable priorityCircle = (GradientDrawable) holder.priorityView.getBackground();
         // Get the appropriate background color based on the priority
         int priorityColor = getPriorityColor(priority);
         priorityCircle.setColor(priorityColor);
+    }
+
+    public void sortPriority() {
+
+        mTaskEntries.clear();
+        mTaskEntries.addAll(assignmentList);
+        mTaskEntries.addAll(examList);
+
+        sortDate();
+
+        notifyDataSetChanged();
+    }
+
+    private void sortDate() {
+        Collections.sort(mTaskEntries, new Comparator<Task>() {
+            @Override
+            public int compare(Task a1, Task a2) {
+                try {
+                    Date a = a1.convertDate();
+                    Date b = a2.convertDate();
+                    return a.compareTo(b);
+                } catch (ParseException e) {
+                    Toast.makeText(mContext, "Date threw error", Toast.LENGTH_LONG).show();
+                }
+                return 0;
+            }
+        });
+    }
+
+    public void sortAssignments() {
+        mTaskEntries = new ArrayList<>(assignmentList);
+        sortDate();
+        notifyDataSetChanged();
+    }
+
+    public void sortExams() {
+        mTaskEntries = new ArrayList<>(examList);
+        sortDate();
+        notifyDataSetChanged();
     }
 
 
@@ -96,7 +158,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
                 priorityColor = ContextCompat.getColor(mContext, R.color.assignment_red);
                 break;
             case 2:
-                priorityColor = ContextCompat.getColor(mContext, R.color.assignment_blue);
+                priorityColor = ContextCompat.getColor(mContext, R.color.assignment_yellow);
                 break;
             case 3:
                 priorityColor = ContextCompat.getColor(mContext, R.color.assignment_green);
@@ -116,14 +178,6 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         return mTaskEntries.size();
     }
 
-    /**
-     * When data changes, this method updates the list of taskEntries
-     * and notifies the adapter to use the new values on it
-     */
-    public void setTasks(List<Task> taskEntries) {
-        mTaskEntries = taskEntries;
-        notifyDataSetChanged();
-    }
 
 
     public List<Task> getTasks() {
@@ -172,7 +226,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         // Call the removeItem method in the adapter to delete the item
-                        showEditDialog(view.getContext(), position);
+                        //showEditDialog(view.getContext(), position);
                     }
                 }
             });
@@ -183,69 +237,77 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
 
     }
 
-    public void showEditDialog(Context context, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.create_task_dialog, null);
-        builder.setView(dialogView);
-
-        // Find and set up UI components in the dialog
-        EditText taskNameText = dialogView.findViewById(R.id.taskNameText);
-        RadioGroup buttons = (RadioGroup)dialogView.findViewById(R.id.radioGroup);
-        DatePicker dueDatePicker = dialogView.findViewById(R.id.taskDatePicker);
-
-        // Get the existing Assignment object at the given position
-        Task task = mTaskEntries.get(position);
-
-        // Set the existing values in the EditText fields
-        taskNameText.setText(task.getName());
-
-
-        String[] dateComponents = task.getUpdatedAt().split("/");
-        dueDatePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
-
-        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String newTaskName = taskNameText.getText().toString();
-
-                int priority = 1;
-                int checkedId = buttons.getCheckedRadioButtonId();
-                if (checkedId == R.id.radButton1) {
-                    priority = 1;
-                } else if (checkedId == R.id.radButton2) {
-                    priority = 2;
-                } else if (checkedId == R.id.radButton3) {
-                    priority = 3;
-                }
-
-                String day = String.valueOf(dueDatePicker.getDayOfMonth());
-                String month = String.valueOf(dueDatePicker.getMonth()+1);
-                String year = String.valueOf(dueDatePicker.getYear());
-
-                String date = month + "/" + day + "/" + year;
-
-                task.setName(newTaskName);
-                task.setUpdatedAt(date);
-                task.setPriority(priority);
-
-                notifyItemChanged(position);
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        // Show the dialog
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
+//    public void showEditDialog(Context context, int position) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        View dialogView = inflater.inflate(R.layout.create_task_dialog, null);
+//        builder.setView(dialogView);
+//
+//        // Find and set up UI components in the dialog
+//        EditText taskNameText = dialogView.findViewById(R.id.taskNameText);
+//        RadioGroup buttons = (RadioGroup)dialogView.findViewById(R.id.radioGroup);
+//        DatePicker dueDatePicker = dialogView.findViewById(R.id.taskDatePicker);
+//
+//        // Get the existing Assignment object at the given position
+//        Task task = mTaskEntries.get(position);
+//
+//        // Set the existing values in the EditText fields
+//        taskNameText.setText(task.getName());
+//
+//
+//        String[] dateComponents = task.getDate().split("/");
+//        dueDatePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
+//
+//        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                String newTaskName = taskNameText.getText().toString();
+//
+//                int priority = 1;
+//                int checkedId = buttons.getCheckedRadioButtonId();
+//                if (checkedId == R.id.radButton1) {
+//                    priority = 1;
+//                } else if (checkedId == R.id.radButton2) {
+//                    priority = 2;
+//                } else if (checkedId == R.id.radButton3) {
+//                    priority = 3;
+//                }
+//
+//                String day = String.valueOf(dueDatePicker.getDayOfMonth());
+//                String month = String.valueOf(dueDatePicker.getMonth()+1);
+//                String year = String.valueOf(dueDatePicker.getYear());
+//
+//                String date = month + "/" + day + "/" + year;
+//
+//                task.setName(newTaskName);
+//                task.setUpdatedAt(date);
+//                task.setPriority(priority);
+//
+//                notifyItemChanged(position);
+//            }
+//        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                dialogInterface.dismiss();
+//            }
+//        });
+//
+//        // Show the dialog
+//        AlertDialog alertDialog = builder.create();
+//        alertDialog.show();
+//    }
 
     public void removeItem(int position) {
-            mTaskEntries.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, getItemCount());
+        Task task = mTaskEntries.get(position);
+        if(task.getClass() == Assignment.class) {
+            assignmentList.remove((Assignment) task);
+            Assignment.saveData(assignmentList, mContext);
+        } else if(task.getClass() == Exam.class){
+            examList.remove((Exam) task);
+            Exam.saveData(examList, mContext);
+        }
+        mTaskEntries.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
     }
 }

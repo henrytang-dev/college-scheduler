@@ -82,7 +82,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
      */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.mExamName.setText(mData.get(position).getExamName());
+        holder.mExamName.setText(mData.get(position).getExamName() + " Exam");
         holder.mLocation.setText(mData.get(position).getLocation());
         String time = mData.get(position).getTime();
         String[] timeComponents = time.split(":");
@@ -118,7 +118,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        fragment.saveData(mData);
+        Exam.saveData(mData, mInflater.getContext());
     }
 
     /**
@@ -140,7 +140,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
         });
 
         notifyDataSetChanged();
-        fragment.saveData(mData);
+        Exam.saveData(mData, mInflater.getContext());
     }
 
     /**
