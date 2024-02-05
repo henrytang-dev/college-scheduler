@@ -21,6 +21,9 @@ public class Course {
     private boolean[] courseDays;
     private String courseColor;
 
+    /**
+        * Constructor for the Course class.
+     */
     public Course(String courseName, String courseInstructor, String courseLocation, boolean[] courseDays, String courseStartTime, String courseEndTime, String courseColor) {
         this.courseName = courseName;
         this.courseInstructor = courseInstructor;
@@ -31,6 +34,9 @@ public class Course {
         this.courseColor = courseColor;
     }
 
+    /**
+        * Default constructor for the Course class.
+     */
     public Course() {
         this.courseName = "";
         this.courseInstructor = "";
@@ -140,6 +146,10 @@ public class Course {
     }
 
 
+    /**
+        * Load the course list data from the shared preferences.
+        * @param context The context of the application.
+     */
     public static ArrayList<Course> loadCourseListData(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences courses", MODE_PRIVATE);
         Gson gson = new Gson();
@@ -152,6 +162,12 @@ public class Course {
         }
         return courseList;
     }
+
+    /**
+     * Set up the classNameArray
+     * @param courseList
+     * @return The course list data.
+     */
     public static ArrayList<String> setupClassArray(List<Course> courseList) {
         ArrayList<String> classNameArray =  new ArrayList<>();
         classNameArray.add("Pick a class");
@@ -161,6 +177,11 @@ public class Course {
         return classNameArray;
     }
 
+    /**
+     * Get the course from the course name.
+     * @param courseName The course name.
+     * @param courseList The course list data.
+     */
     public static Course getCourseFromName(String courseName, List<Course> courseList) {
         for(Course course : courseList) {
             if(course.getCourseName().equals(courseName)) {
@@ -170,6 +191,10 @@ public class Course {
         return null;
     }
 
+    /**
+     * String representation of the course.
+     * @return The string representation of the course.
+     */
     public String toString() {
         return "Course Name: " + courseName + "\n" +
                 "Course Instructor: " + courseInstructor + "\n" +

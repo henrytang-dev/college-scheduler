@@ -10,6 +10,10 @@ import java.util.Map;
 public class ColorMapper {
     private final Map<String, Integer> colorMap;
 
+    /**
+     * Constructor for the ColorMapper class.
+     * @param context The context of the application.
+     */
     public ColorMapper(Context context) {
         colorMap = new HashMap<>();
         colorMap.put("Red", ContextCompat.getColor(context, R.color.assignment_red));
@@ -20,6 +24,10 @@ public class ColorMapper {
         colorMap.put("Brown", ContextCompat.getColor(context, R.color.assignment_brown));
     }
 
+    /**
+     * @param color The color to get the resource ID for.
+     * @return The resource ID for the color.
+     */
     public int getColorResourceId(String color) {
         return colorMap.getOrDefault(color, R.color.assignment_red); // Default color
     }

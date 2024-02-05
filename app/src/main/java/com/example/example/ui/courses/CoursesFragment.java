@@ -42,6 +42,18 @@ public class CoursesFragment extends Fragment {
     TextView addCourseIndicator;
     private FragmentHomeBinding binding;
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Return the View for the fragment's UI, or null.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         CoursesViewModel homeViewModel =
@@ -49,8 +61,6 @@ public class CoursesFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-//        View root = binding.getRoot();
-
 
         addCourseIndicator = root.findViewById(R.id.addCourseIndicator);
 
@@ -74,6 +84,9 @@ public class CoursesFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Create a dialog to add a new course.
+     */
     private void createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -150,6 +163,10 @@ public class CoursesFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Save the list of courses to SharedPreferences.
+     * @param courseList The list of courses to be saved.
+     */
     public void saveData(List<Course> courseList) {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences courses", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -159,6 +176,9 @@ public class CoursesFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * Load the course list data from the shared preferences.
+     */
     private void loadData() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences courses", MODE_PRIVATE);
         Gson gson = new Gson();
@@ -170,9 +190,17 @@ public class CoursesFragment extends Fragment {
             courseList = new ArrayList<>();
         }
     }
+
+    /**
+     * Set the visibility of the add course indicator to invisible.
+     */
     public void setAddCourseIndicatorInvisible() {
         addCourseIndicator.setVisibility(View.INVISIBLE);
     }
+
+    /**
+     * Set the visibility of the add course indicator to visible.
+     */
     public void setAddCourseIndicatorVisible() {
         addCourseIndicator.setVisibility(View.VISIBLE);
     }

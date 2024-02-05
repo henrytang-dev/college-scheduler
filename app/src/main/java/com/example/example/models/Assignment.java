@@ -47,7 +47,10 @@ public class Assignment extends Task {
      * @return The name of the class.
      */
     public String getClassName() {
-        return course.getCourseName();
+        if (course != null) {
+            return course.getCourseName();
+        }
+        return this.className;
     }
 
     /**
@@ -101,7 +104,10 @@ public class Assignment extends Task {
      * @return The color of the assignment.
      */
     public String getColor() {
-        return course.getCourseColor();
+        if (course != null) {
+            return course.getCourseColor();
+        }
+        return "Red";
     }
 
 
