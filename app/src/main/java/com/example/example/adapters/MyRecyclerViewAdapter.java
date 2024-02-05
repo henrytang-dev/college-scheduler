@@ -150,6 +150,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
      * @param position The position of the item to be removed.
      */
     public void removeItem(int position) {
+
         mData.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
@@ -237,11 +238,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             }
         });
 
-
-
         // Show the dialog
         alertDialog.show();
     }
+
 
     /**
      * The ViewHolder class represents each item in the RecyclerView.
@@ -271,11 +271,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             mCheckBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        // Call the removeItem method in the adapter to delete the item
-                        removeItem(position);
-                    }
+                    showDeleteConfirmationDialog();
                 }
             });
 
@@ -289,8 +285,35 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     }
                 }
             });
+        }
+        public void showDeleteConfirmationDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mInflater.getContext());
 
+            builder.setTitle("Confirm Deletion");
+            builder.setMessage("Are you sure you want to delete this assignment?");
 
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        // Call the showEditDialog method in the adapter to open the edit dialog
+                        removeItem(position);
+                    }
+                    dialog.dismiss();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // User canceled the deletion, do nothing or provide feedback
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 }

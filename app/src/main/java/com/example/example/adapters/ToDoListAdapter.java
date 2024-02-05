@@ -212,11 +212,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        // Call the removeItem method in the adapter to delete the item
-                        removeItem(position);
-                    }
+                    showDeleteConfirmationDialog();
                 }
             });
 
@@ -234,68 +230,38 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
             view = itemView;
         }
 
+        public void showDeleteConfirmationDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+            builder.setTitle("Confirm Deletion");
+            builder.setMessage("Are you sure you want to delete this todo item?");
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        // Call the showEditDialog method in the adapter to open the edit dialog
+                        removeItem(position);
+                    }
+                    dialog.dismiss();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // User canceled the deletion, do nothing or provide feedback
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
 
     }
-
-//    public void showEditDialog(Context context, int position) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        View dialogView = inflater.inflate(R.layout.create_task_dialog, null);
-//        builder.setView(dialogView);
-//
-//        // Find and set up UI components in the dialog
-//        EditText taskNameText = dialogView.findViewById(R.id.taskNameText);
-//        RadioGroup buttons = (RadioGroup)dialogView.findViewById(R.id.radioGroup);
-//        DatePicker dueDatePicker = dialogView.findViewById(R.id.taskDatePicker);
-//
-//        // Get the existing Assignment object at the given position
-//        Task task = mTaskEntries.get(position);
-//
-//        // Set the existing values in the EditText fields
-//        taskNameText.setText(task.getName());
-//
-//
-//        String[] dateComponents = task.getDate().split("/");
-//        dueDatePicker.updateDate(Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[0])-1 ,Integer.parseInt(dateComponents[1]));
-//
-//        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                String newTaskName = taskNameText.getText().toString();
-//
-//                int priority = 1;
-//                int checkedId = buttons.getCheckedRadioButtonId();
-//                if (checkedId == R.id.radButton1) {
-//                    priority = 1;
-//                } else if (checkedId == R.id.radButton2) {
-//                    priority = 2;
-//                } else if (checkedId == R.id.radButton3) {
-//                    priority = 3;
-//                }
-//
-//                String day = String.valueOf(dueDatePicker.getDayOfMonth());
-//                String month = String.valueOf(dueDatePicker.getMonth()+1);
-//                String year = String.valueOf(dueDatePicker.getYear());
-//
-//                String date = month + "/" + day + "/" + year;
-//
-//                task.setName(newTaskName);
-//                task.setUpdatedAt(date);
-//                task.setPriority(priority);
-//
-//                notifyItemChanged(position);
-//            }
-//        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                dialogInterface.dismiss();
-//            }
-//        });
-//
-//        // Show the dialog
-//        AlertDialog alertDialog = builder.create();
-//        alertDialog.show();
-//    }
 
     public void removeItem(int position) {
         Task task = mTaskEntries.get(position);

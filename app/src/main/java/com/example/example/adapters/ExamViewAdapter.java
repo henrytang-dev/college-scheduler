@@ -274,8 +274,7 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        // Call the removeItem method in the adapter to delete the item
-                        removeItem(position);
+                        showDeleteConfirmationDialog();
                     }
                 }
             });
@@ -290,8 +289,35 @@ public class ExamViewAdapter extends RecyclerView.Adapter<ExamViewAdapter.ViewHo
                     }
                 }
             });
+        }
+        public void showDeleteConfirmationDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mInflater.getContext());
 
+            builder.setTitle("Confirm Deletion");
+            builder.setMessage("Are you sure you want to delete this exam?");
 
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        // Call the showEditDialog method in the adapter to open the edit dialog
+                        removeItem(position);
+                    }
+                    dialog.dismiss();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // User canceled the deletion, do nothing or provide feedback
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 
