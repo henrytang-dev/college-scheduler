@@ -7,6 +7,9 @@ import androidx.core.content.ContextCompat;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is responsible for mapping color names to their resource IDs.
+ */
 public class ColorMapper {
     private final Map<String, Integer> colorMap;
 

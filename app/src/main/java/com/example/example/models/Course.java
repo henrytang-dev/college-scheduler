@@ -12,6 +12,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This class represents a Course entity with attributes such as courseName, courseInstructor, courseLocation, courseDays, courseStartTime, courseEndTime, and courseColor.
+ * It provides methods to get and set these attributes, as well as methods to load the course list data from the shared preferences and set up the classNameArray.
+ */
 public class Course {
     private String courseName;
     private String courseInstructor;
@@ -22,7 +27,14 @@ public class Course {
     private String courseColor;
 
     /**
-        * Constructor for the Course class.
+     * Constructor for the Course class.
+     * @param courseName The name of the course.
+     * @param courseInstructor The instructor of the course.
+     * @param courseLocation The location of the course.
+     * @param courseDays The days of the course.
+     * @param courseStartTime The start time of the course.
+     * @param courseEndTime The end time of the course.
+     * @param courseColor The color of the course.
      */
     public Course(String courseName, String courseInstructor, String courseLocation, boolean[] courseDays, String courseStartTime, String courseEndTime, String courseColor) {
         this.courseName = courseName;

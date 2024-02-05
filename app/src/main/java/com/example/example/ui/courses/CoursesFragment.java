@@ -35,6 +35,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This fragment displays a list of courses and provides functionality for adding new courses.
+ * It uses a RecyclerView to display the courses and a FloatingActionButton for adding new courses.
+ */
 public class CoursesFragment extends Fragment {
     RecyclerView recyclerView;
     List<Course> courseList;
@@ -205,6 +209,9 @@ public class CoursesFragment extends Fragment {
         addCourseIndicator.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Called when the view previously created by onCreateView has been detached from the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

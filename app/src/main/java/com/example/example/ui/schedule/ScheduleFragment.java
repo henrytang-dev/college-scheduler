@@ -14,6 +14,10 @@ import com.example.example.adapters.MyViewPagerAdapter;
 import com.example.example.databinding.FragmentGalleryBinding;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * This fragment displays a ViewPager2 with two tabs: one for assignments and one for exams.
+ * It uses a TabLayout to display the tabs and a ViewPager2 to display the fragments.
+ */
 public class ScheduleFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
@@ -22,6 +26,17 @@ public class ScheduleFragment extends Fragment {
     MyViewPagerAdapter myViewPagerAdapter;
 
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         ScheduleViewModel galleryViewModel =
@@ -63,6 +78,9 @@ public class ScheduleFragment extends Fragment {
     }
 
 
+    /**
+     * Called when the view previously created by onCreateView has been detached from the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

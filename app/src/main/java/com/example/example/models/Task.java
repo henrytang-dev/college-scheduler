@@ -22,36 +22,69 @@ public class Task {
     private String name;
     protected String date;
 
+    /**
+     * Constructor for the Task class.
+     * @param course The course associated with the task.
+     * @param date The date of the task in the format "MM/dd/yyyy".
+     */
     public Task(Course course, String date) {
         this.date = date;
         this.course = course;
     }
 
+    /**
+     * Get the date of the task.
+     * @return The date of the task.
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     * Set the date of the task.
+     * @param date The date of the task.
+     */
     public void setDate(String date) {
         this.date = date;
     }
 
+    /**
+     * Get the name of the task.
+     * @return The name of the task.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name of the task.
+     * @param name The name of the task.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-
+    /**
+     * Get the course associated with the task.
+     * @return the course
+     */
     public Course getCourse() {
         return course;
     }
 
+    /**
+     * Set the course associated with the task.
+     * @param course the course to set
+     */
     public void setCourse(Course course) {
         this.course = course;
     }
 
+    /**
+     * Get the priority of the task.
+     * @return the priority
+     * @throws ParseException If the date cannot be parsed.
+     */
     public int getPriority() throws ParseException {
         Date dateObject = convertDate();
         Date today = new Date();
@@ -65,6 +98,12 @@ public class Task {
             return 3;
         }
     }
+
+    /**
+     * @param date The date of the task.
+     * @param today The current date.
+     * @return The number of days between the date and today.
+     */
     private long daysBetween(Date date, Date today) {
         Calendar calendarDate = Calendar.getInstance();
         calendarDate.setTime(date);
@@ -79,7 +118,11 @@ public class Task {
     }
 
 
-
+    /**
+     * Convert the date to a Date object.
+     * @return The Date object representing the date of the task.
+     * @throws ParseException If there is an error parsing the date string.
+     */
     public Date convertDate() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M/dd/yyyy");
         Date dateObject = simpleDateFormat.parse(date);

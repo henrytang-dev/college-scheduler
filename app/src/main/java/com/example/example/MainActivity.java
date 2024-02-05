@@ -16,11 +16,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.example.databinding.ActivityMainBinding;
 
+/**
+ * This class is the main activity for the app. It sets up the navigation drawer and the app bar.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    /**
+     * Initialize the contents of the Activity's standard options menu.
+     * @param menu The options menu in which you place your items.
+     * @return You return true for the menu to be displayed; if you return false it will not be shown.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -50,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * @return true if Up navigation completed successfully and this Activity was finished, false otherwise.
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);

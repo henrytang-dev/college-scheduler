@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * This class is responsible for handling the data for the CoursesFragment.
+ */
 public class CoursesViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;

@@ -32,16 +32,30 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This fragment displays a list of tasks and provides functionality for adding, sorting, and editing tasks.
+ * It uses a RecyclerView to display the tasks.
+ * The fragment also includes a Spinner for sorting tasks by priority, assignments, or exams.
+ */
 public class TodoFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
     FloatingActionButton floatingActionButton;
-
     ToDoListAdapter toDoListAdapter;
     RecyclerView recyclerView;
     List<Task> taskList;
 
-
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
+     * @return Return the View for the fragment's UI, or null.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -135,6 +149,9 @@ public class TodoFragment extends Fragment {
 //        dialog.show();
 //    }
 
+    /**
+     * Called when the view previously created by onCreateView has been detached from the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

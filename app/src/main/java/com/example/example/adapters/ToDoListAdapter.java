@@ -53,6 +53,11 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
 
+    /**
+     * Constructor for the TaskAdapter that initializes the Context.
+     * @param context The current context. Used to inflate the layout file.
+     * @param taskList The list of tasks to display.
+     */
     public ToDoListAdapter(Context context, List<Task> taskList) {
         mContext = context;
 
@@ -66,6 +71,13 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
     }
 
 
+    /**
+     * Called when ViewHolders are created to fill a RecyclerView.
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new TaskViewHolder that holds the View for each task
+     */
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -76,8 +88,12 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         return new TaskViewHolder(view);
     }
 
-
-
+    /**
+     * Called by the RecyclerView to display data at a specified position in the Cursor.
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
         // Determine the values of the wanted data
@@ -110,6 +126,9 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         priorityCircle.setColor(priorityColor);
     }
 
+    /**
+     * Sorts the list of tasks by priority.
+     */
     public void sortPriority() {
 
         mTaskEntries.clear();
@@ -121,6 +140,9 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         notifyDataSetChanged();
     }
 
+    /**
+     * Sorts the list of tasks by date.
+     */
     private void sortDate() {
         Collections.sort(mTaskEntries, new Comparator<Task>() {
             @Override
@@ -137,12 +159,18 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         });
     }
 
+    /**
+     * Sorts the list of tasks by date.
+     */
     public void sortAssignments() {
         mTaskEntries = new ArrayList<>(assignmentList);
         sortDate();
         notifyDataSetChanged();
     }
 
+    /**
+     * Sorts the list of tasks by date.
+     */
     public void sortExams() {
         mTaskEntries = new ArrayList<>(examList);
         sortDate();
@@ -150,6 +178,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
     }
 
 
+    /**
+     * @param priority The priority of the task
+     * @return The priority color
+     */
     private int getPriorityColor(int priority) {
         int priorityColor = 0;
 
@@ -170,6 +202,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
     }
 
 
+    /**
+     * Returns the number of items to display.
+     * @return The number of items in the list of tasks
+     */
     @Override
     public int getItemCount() {
         if (mTaskEntries == null) {
@@ -178,13 +214,17 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
         return mTaskEntries.size();
     }
 
-
-
+    /**
+     * Returns the list of tasks
+     * @return The list of tasks
+     */
     public List<Task> getTasks() {
         return mTaskEntries;
     }
 
-    // Inner class for creating ViewHolders
+    /**
+     * Inner class for creating ViewHolders
+     */
     class TaskViewHolder extends RecyclerView.ViewHolder {
 
         // Class variables for the task description and priority TextViews
@@ -195,11 +235,7 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
 
         View view;
 
-
-
-
         // Constructor for the TaskViewHolders.
-
         public TaskViewHolder(View itemView) {
             super(itemView);
 
@@ -263,6 +299,10 @@ public class ToDoListAdapter extends RecyclerView.Adapter<ToDoListAdapter.TaskVi
 
     }
 
+    /**
+     * Removes the item at the specified position from the list of tasks.
+     * @param position The position of the item to remove
+     */
     public void removeItem(int position) {
         Task task = mTaskEntries.get(position);
         if(task.getClass() == Assignment.class) {

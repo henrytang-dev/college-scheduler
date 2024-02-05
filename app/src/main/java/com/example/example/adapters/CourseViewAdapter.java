@@ -26,6 +26,10 @@ import com.example.example.ui.courses.CoursesFragment;
 
 import java.util.List;
 
+/**
+ * This class is an adapter for the RecyclerView in the CoursesFragment.
+ * It provides functionality for adding, editing, and deleting courses.
+ */
 public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.ViewHolder> {
     private List<Course> mData;
     private LayoutInflater mInflater;
@@ -33,6 +37,12 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
     private Context mContext;
     private ColorMapper colorMapper;
 
+    /**
+     * Constructor for the CourseViewAdapter class.
+     * @param fragment The CoursesFragment that the adapter is associated with.
+     * @param data    The list of courses to be displayed in the RecyclerView.
+     * @param context The context of the fragment.
+     */
     public CourseViewAdapter(CoursesFragment fragment, List<Course> data, Context context) {
         this.mContext = context;
         this.mInflater = LayoutInflater.from(fragment.getContext());
@@ -41,6 +51,13 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         this.colorMapper = new ColorMapper(context);
     }
 
+    /**
+     * This method inflates the row layout from xml when needed.
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return        A new ViewHolder that holds a View of the given view type.
+     */
     @NonNull
     @Override
     public CourseViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,6 +65,12 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         return new ViewHolder(view);
     }
 
+    /**
+     * This method binds the data to the ViewHolder.
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull CourseViewAdapter.ViewHolder holder, int position) {
         holder.mCourseName.setText(mData.get(position).getCourseName());
@@ -82,11 +105,20 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
             fragment.setAddCourseIndicatorInvisible();
         }
     }
+
+    /**
+     * This method returns the total number of items in the data set held by the adapter.
+     * @return The total number of items in the data set held by the adapter.
+     */
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
+    /**
+     * This method removes an item from the adapter's data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     public void removeItem(int position) {
         mData.remove(position);
         notifyItemRemoved(position);
@@ -98,6 +130,12 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         }
     }
 
+    /**
+     * This method shows the edit dialog for a course.
+     * @param context The context of the fragment.
+     * @param position The position of the item within the adapter's data set.
+     * @param mData The list of courses to be displayed in the RecyclerView.
+     */
     public void showEditDialog(Context context, int position, List<Course> mData) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -208,6 +246,10 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         alertDialog.show();
     }
 
+    /**
+     * @param time The time in 24-hour format.
+     * @return The time in 12-hour format.
+     */
     private String remove24Hour(String time) {
         String[] timeComponents = time.split(":");
         int hour = Integer.parseInt(timeComponents[0]);
@@ -220,6 +262,9 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         return time;
     }
 
+    /**
+     * This class is a custom ViewHolder for the CourseViewAdapter.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView mCourseName;
         TextView mCourseLocation;
@@ -230,6 +275,10 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
         ImageButton mDeleteBtn;
         ImageButton mEditBtn;
 
+        /**
+         * Constructor for the ViewHolder class.
+         * @param itemView The view of the ViewHolder.
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             mCourseName = itemView.findViewById(R.id.courseName);
@@ -260,6 +309,9 @@ public class CourseViewAdapter extends RecyclerView.Adapter<CourseViewAdapter.Vi
             });
         }
 
+        /**
+         * This method shows the delete confirmation dialog.
+         */
         public void showDeleteConfirmationDialog() {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
